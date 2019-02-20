@@ -55,11 +55,11 @@
 		
 		<!-- Migracoes - Flyway -->
 		<!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
-		<dependency>
-		    <groupId>org.flywaydb</groupId>
-		    <artifactId>flyway-core</artifactId>
-		    <version>5.2.4</version><!--$NO-MVN-MAN-VER$-->
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 		    <groupId>org.flywaydb</groupId> -->
+<!-- 		    <artifactId>flyway-core</artifactId> -->
+<!-- 		    <version>5.2.4</version>$NO-MVN-MAN-VER$ -->
+<!-- 		</dependency> -->
 
 		
 		<!-- Hibernate Java 8 Support -->

@@ -55,7 +55,7 @@ public class RefreshTokenPostProcessor implements ResponseBodyAdvice<OAuth2Acces
 		Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
 		refreshTokenCookie.setHttpOnly(true);
 		
-		System.out.println(">>>>>> algamoneyApiProperty.getSeguranca().isEnableHttps(): " + algamoneyApiProperty.getSeguranca().isEnableHttps());
+//		System.out.println(">>>>>> algamoneyApiProperty.getSeguranca().isEnableHttps(): " + algamoneyApiProperty.getSeguranca().isEnableHttps());
 		
 		refreshTokenCookie.setSecure(algamoneyApiProperty.getSeguranca().isEnableHttps());
 		refreshTokenCookie.setPath(req.getContextPath() + "/oauth/token");
