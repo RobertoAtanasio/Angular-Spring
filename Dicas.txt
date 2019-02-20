@@ -118,3 +118,6 @@
 ---------------------------
 *	abrir a pasta do diretório do projeto: C:\Angular\workspace\algamoney-api
 *	git init
+*	git status
+*	git add .
+*	git commit -m 'Primeiro Commit'
