@@ -1,0 +1,120 @@
+3.8. Validando atributos desconhecidos
+--------------------------------------
+*	quando não existir o atributo, a propriedade spring.jackson.deserialization.fail-on-unknown-properties=true
+	em application.properties estiver marcada com true, não irá permitir o envio de "novo" campos que não estejam
+	definidos na classe de recepção.
+
+3.9. Tratando erros com ExceptionHandler
+----------------------------------------
+*	Criado a classe AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler
+*	injetar @ControllerAdvice na classe
+*	criado o arquivo messages.propoerties onde foi incluído a mensagem para ser aplicada na classe AlgamoneyExceptionHandler
+*	incluir tramento da mensagem para o campo obrigatório em ValidationMessages.properties
+
+3.10. Validando valores inválidos com Bean Validation
+-----------------------------------------------------
+*	incluir o parâmetro @NotNull na classe Categoria.java
+*	em CategoriaResource.java incluir a injeção @Valid
+*	em AlgamoneyExceptionHandler, criar método criarListaDeErros e incluir chamada desse método 
+	no método  handleMethodArgumentNotValid
+*	em messages.properties, inluir categoria.nome=Nome que dará nome ao campo da classe Categoria.java para ser utilizada
+	na passagem da mensagem de erro, em vez de passar o nome do campo original.
+*	incluir tramento da mensagem para o tamanho do campo em ValidationMessages.properties
+
+3.12. Usando eventos para adicionar header Location
+---------------------------------------------------
+*	criar public class RecursoCriadoEvent extends ApplicationEvent{
+*	criar public class RecursoCriadoListener implements ApplicationListener<RecursoCriadoEvent>{
+*	injetar @Autowired private ApplicationEventPublisher publisher; nas classes PessoasResource.java e CategoriaResource.java
+*	chamar método de acionar o evento (ver exemplo abaixo):
+	publisher.publishEvent(new RecursoCriadoEvent(this, response, pessoaSalva.getCodigo()));	
+	return ResponseEntity.status(HttpStatus.CREATED).body(pessoaSalva);
+	
+4.1. Removendo pessoa com DELETE
+--------------------------------
+*	criado método em PessoaResource.java: public void remover (@PathVariable Long codigo)
+*	criado método em AlgamoneyExceptionHandler para tratar a exceção lançada quando se tenta excluir um registros
+	que não existe na base: public void handleEmptyResultDataAccessException (RuntimeException ex)
+	
+5.2. Desafio: Lista e busca de lançamentos
+------------------------------------------
+*	É preciso importar as dependências do jova 8 para o suporte dos campos de data no pow.xml
+		<!-- Hibernate Java 8 Support -->
+		<dependency>
+    		<groupId>org.hibernate</groupId>
+    		<artifactId>hibernate-java8</artifactId>
+		</dependency>
+		
+		<!-- Suporte do Jackson para as datas do Java 8 -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+*	Altera application.properties para incluir a mensagem e formatação do campo de data
+
+5.4. Validando inconsistências
+------------------------------
+*	criado em AlgamoneyExceptionHandler o tratamento para a exceção de erro do banco de dados:
+	@ExceptionHandler({ DataIntegrityViolationException.class } )
+*	incluído em messages.properties:
+	recurso.operacao-nao-permitida=Opera\u00E7\u00E3o n\u00E3o permitida
+*	Para tratar as mensagens de exceção de erro do banco de dados de uma melhor forma, importar no pow.xml:
+	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-lang3</artifactId>
+		<version>3.4</version>
+	</dependency>
+	
+5.6. Regra para não salvar pessoa inativa
+-----------------------------------------
+*	criado LancamentoService.java
+*	alterado método public ResponseEntity<Lancamento> criar para acessar LancamentoService
+*	LancamentoService lança exceção PessoaInexistenteOuInativaException
+*	criado a classe PessoaInexistenteOuInativaException.java
+*	criado @ExceptionHandler({ PessoaInexistenteOuInativaException.class }) em LancamentoResource.java para 
+	tratar a exceção. Poderia ser incluída na classe AlgamoneyExceptionHandler.java, mas por ser uma exceção
+	bem específica do lançamento, optamos em colocar na classe LancamentoResource
+	
+6.5. Configurando JWT no projeto
+--------------------------------
+*	Incluir dependência no pow.xml
+
+6.11. Movendo o usuário para o banco de dados
+---------------------------------------------
+*	alterar ResourceServerConfig.java, método public void configure(AuthenticationManagerBuilder auth)
+*	criado método public PasswordEncoder passwordEncoder()
+*	criado classe AppUserDetailsService.java implements UserDetailsService
+*	
+
+6.12. Adicionando permissões de acesso
+--------------------------------------
+*	adiconar no ResourceServerConfig.java incluir @EnableGlobalMethodSecurity(prePostEnabled = true) 
+	para habilitar a segurança nos métodos.
+*	adionar um novo @Bean . O método public MethodSecurityExpressionHandler createExpressionHandler()
+*	Em CategoriaResource.java adicionar as permissões.
+*	adicionado nova client em configuração em AuthorizationServerConfig.java
+
+6.14. Implementando o logout
+----------------------------
+*	A ideia é retirar o refresh_token do cookie
+
+7.1. Implementando projeção de lançamento
+-----------------------------------------
+*	É uma limitação de quais campos é preciso retornar na consulta.
+*	criado método public Page<ResumoLancamento> resumir(LancamentoFilter lancamentoFilter, Pageable pageable);
+	em LancamentoRepositoryQuery
+*	criado método public Page<ResumoLancamento> resumir(LancamentoFilter lancamentoFilter, Pageable pageable) {
+	em LancamentoRepositoryImpl
+*	criado método public Page<ResumoLancamento> resumir(LancamentoFilter lancamentoFilter, Pageable pageable) {
+	em LancamentoResource
+	
+7.2. Profiles do Spring
+-----------------------
+*	criado classe AlgamoneyApiProperty.java
+*	alterar classe AlgamoneyApiApplication injetando a propriedade @EnableConfigurationProperties(AlgamoneyApiProperty.class)
+*	altgerar arquivo application.proporties 
+
+7.4. Deploy da API na nuvem
+---------------------------
+*	abrir a pasta do diretório do projeto: C:\Angular\workspace\algamoney-api
+*	git init
