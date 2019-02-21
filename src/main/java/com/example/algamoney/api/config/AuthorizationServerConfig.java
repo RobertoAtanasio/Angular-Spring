@@ -53,10 +53,10 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 //		System.out.println(">>>>>>> setTokenEnhancers >>>>>>>>>>>>>>>>");
 		
 		endpoints
-			.tokenStore(tokenStore())
-			.accessTokenConverter(accessTokenConverter())
-			.reuseRefreshTokens(false)
-			.authenticationManager(authenticationManager);
+		.tokenStore(tokenStore())
+		.tokenEnhancer(tokenEnhancerChain)
+		.reuseRefreshTokens(false)
+		.authenticationManager(authenticationManager);
 	}
 	
 	@Bean
