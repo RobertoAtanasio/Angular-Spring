@@ -55,10 +55,10 @@
 		
 		<!-- Migracoes - Flyway -->
 		<!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
-		<dependency>
+		<!-- <dependency>
 		    <groupId>org.flywaydb</groupId>
 		    <artifactId>flyway-core</artifactId>
-		</dependency>
+		</dependency> -->
 		
 		<!-- Hibernate Java 8 Support -->
 		<dependency>
