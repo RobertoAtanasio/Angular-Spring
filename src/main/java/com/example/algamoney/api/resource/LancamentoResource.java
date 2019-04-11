@@ -83,6 +83,7 @@ public class LancamentoResource {
 	@GetMapping
 	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
 	public Page<Lancamento> pesquisar(LancamentoFilter lancamentoFilter, Pageable pageable) {
+		System.out.println(">>>> Pesquisar...");
 		return lancamentoRepository.filtrar(lancamentoFilter, pageable);
 	}
 	
@@ -97,6 +98,7 @@ public class LancamentoResource {
 	@GetMapping("/{codigo}")
 	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
 	public ResponseEntity<Lancamento> buscarPeloCodigo(@PathVariable Long codigo) {
+		System.out.println(">>>> Pesquisou por código...");
 		Lancamento lancamento = acessarLancamentoPorCodigo(codigo);
 		return lancamento != null ? ResponseEntity.ok(lancamento) : ResponseEntity.notFound().build();
 	}

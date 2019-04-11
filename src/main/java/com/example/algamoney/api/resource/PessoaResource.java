@@ -47,7 +47,8 @@ public class PessoaResource {
 	@GetMapping
 	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA')")
 	public Page<Pessoa> listar(@RequestParam(required = false, defaultValue = "%") String nome, Pageable pageable) {
-		return pessoaRepository.findByNomeContaining(nome, pageable);
+		return pessoaRepository.listarPessoaOrderByNome(nome, pageable);
+//		return pessoaRepository.findByNomeContaining(nome, pageable);
 	}
 	
 	@PostMapping

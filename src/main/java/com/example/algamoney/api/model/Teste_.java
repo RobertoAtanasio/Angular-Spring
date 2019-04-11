@@ -12,5 +12,8 @@ public abstract class Teste_ {
 	public static volatile SingularAttribute<Teste, Long> codigo;
 	public static volatile SingularAttribute<Teste, LocalDateTime> dataHora;
 
+	public static final String CODIGO = "codigo";
+	public static final String DATA_HORA = "dataHora";
+
 }
 
