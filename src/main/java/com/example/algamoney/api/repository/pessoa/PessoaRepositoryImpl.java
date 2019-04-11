@@ -75,7 +75,12 @@ public class PessoaRepositoryImpl implements PessoaRepositoryQuery {
 		this.criarRestricoes(nome, builder, criteria, root);
 		
 		criteria.select(builder.count(root));
-		return manager.createQuery(criteria).getSingleResult();
+		
+		Long quantidade = manager.createQuery(criteria).getSingleResult();
+		
+		manager.close();
+		
+		return quantidade;
 	}
 
 }

@@ -98,7 +98,12 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
 		criteria.where(predicates);
 		
 		criteria.select(builder.count(root));
-		return manager.createQuery(criteria).getSingleResult();
+		
+		Long quantidade = manager.createQuery(criteria).getSingleResult();
+		
+		manager.close();
+		
+		return quantidade;
 	}
 	
 	private Predicate[] criarRestricoes(LancamentoFilter lancamentoFilter, CriteriaBuilder builder,
