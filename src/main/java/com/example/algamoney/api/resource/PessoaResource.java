@@ -54,7 +54,11 @@ public class PessoaResource {
 	@PostMapping
 	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_PESSOA') and #oauth2.hasScope('write')")
 	public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa pessoa, HttpServletResponse response) {
-		Pessoa pessoaSalva = pessoaRepository.save(pessoa);
+		
+		//- ver em Contato.java as observações sobre o porquê de substituir o save abaixo pela chamada em pessoaService
+//		Pessoa pessoaSalva = pessoaRepository.save(pessoa);
+		
+		Pessoa pessoaSalva = pessoaService.salvar(pessoa);
 
 //		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{codigo}")
 //				.buildAndExpand(pessoaSalva.getCodigo()).toUri();
