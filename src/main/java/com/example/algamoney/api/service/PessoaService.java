@@ -23,9 +23,23 @@ public class PessoaService {
 		
 		Pessoa pessoaSalva = buscarPessoaPeloCodigo(codigo);
 	
-		pessoa.getContatos().forEach(c -> c.setPessoa(pessoa));
+		// alterações para que o parâmetro orphanRemoval = true em Pessoa.java funcione
+		// Se não fizer isso, dará o seguinte erro ao chamar a API ( put http://localhost:8080/pessoas/22 ):
+//		{
+//		    "timestamp": "2019-05-20",
+//		    "status": 500,
+//		    "error": "Internal Server Error",
+//		    "exception": "org.springframework.orm.jpa.JpaSystemException",
+//		    "message": "A collection with cascade=\"all-delete-orphan\" was no longer referenced by the owning entity instance: com.example.algamoney.api.model.Pessoa.contatos; nested exception is org.hibernate.HibernateException: A collection with cascade=\"all-delete-orphan\" was no longer referenced by the owning entity instance: com.example.algamoney.api.model.Pessoa.contatos",
+//		    "path": "/pessoas/22"
+//		}
+		// é preciso limpar os contatos e depois atualizar com os novos
+		pessoaSalva.getContatos().clear();
+		pessoaSalva.getContatos().addAll(pessoa.getContatos());
+		pessoaSalva.getContatos().forEach(c -> c.setPessoa(pessoaSalva));
 		
-		BeanUtils.copyProperties(pessoa,pessoaSalva,"codigo");
+		// os parâmetro "codigo" e "contatos" serve para que o BeanUtils.copyProperties ignore estes atributos.
+		BeanUtils.copyProperties(pessoa,pessoaSalva,"codigo", "contatos");
 		
 //		System.out.println(">> Código " + pessoaSalva.get().getCodigo());
 //		System.out.println(">> Nome " + pessoaSalva.get().getNome());

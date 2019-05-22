@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -13,10 +14,18 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import com.example.algamoney.api.repository.listener.LancamentoAnexoListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+// a @EntityListeners(LancamentoAnexoListener.class) fará com que o evento listener da geração da URL do arquivo 
+// anexo funcione. Pois sem esse atributo será apenas uma classe simples.
+// Toda vez que um lançamento for carregado no banco esse evento será disparado. É como se fosse uma "trigger"
+
+@EntityListeners(LancamentoAnexoListener.class)
 @Entity
 @Table(name = "lancamento")
 public class Lancamento {
@@ -49,10 +58,22 @@ public class Lancamento {
 	@JoinColumn(name = "codigo_categoria")
 	private Categoria categoria;
 
+	// caso não queira que os dados da propriedade contatos em pessoa seja recuperado 
+	// no JSON, incluir a propriedade @JsonIgnoreProperties("contatos")
+	// Obs.: caso queira ignorar outros atributos é só adicionar os campos na lista abaixo:
+//	@JsonIgnoreProperties({"contatos","endereco"})
+	@JsonIgnoreProperties("contatos")
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "codigo_pessoa")
 	private Pessoa pessoa;
+	
+	@Column(name = "anexo")
+	private String anexo;
+	
+	// @Transient - não vai ser persistida no banco de dados
+	@Transient
+	private String urlAnexo;
 	
 	// A anotação @JsonIgnore fará com que o método não retorno junto com o valores np JSON da requisição
 	@JsonIgnore
@@ -130,6 +151,22 @@ public class Lancamento {
 
 	public void setPessoa(Pessoa pessoa) {
 		this.pessoa = pessoa;
+	}
+
+	public String getAnexo() {
+		return anexo;
+	}
+
+	public void setAnexo(String anexo) {
+		this.anexo = anexo;
+	}
+
+	public String getUrlAnexo() {
+		return urlAnexo;
+	}
+
+	public void setUrlAnexo(String urlAnexo) {
+		this.urlAnexo = urlAnexo;
 	}
 
 	@Override

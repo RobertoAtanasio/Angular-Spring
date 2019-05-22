@@ -33,6 +33,9 @@
         <thymeleaf-layout-dialect.version>2.2.2</thymeleaf-layout-dialect.version>
         <thymeleaf-extras-data-attribute.version>2.0.1</thymeleaf-extras-data-attribute.version>
         <thymeleaf-extras-java8time.version>3.0.0.RELEASE</thymeleaf-extras-java8time.version>
+        
+        <!-- Versão AWS -->
+        <aws-java-sdk.version>1.11.274</aws-java-sdk.version>
 	</properties>
 
 	<dependencies>
@@ -147,6 +150,13 @@
             <version>${jasperreports-fonts.version}</version>
         </dependency>
 		
+		<!-- Amazon S3 -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>${aws-java-sdk.version}</version>
+        </dependency>
+        
 	</dependencies>
 
 	<build>

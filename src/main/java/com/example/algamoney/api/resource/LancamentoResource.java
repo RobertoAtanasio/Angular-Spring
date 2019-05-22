@@ -1,5 +1,6 @@
 package com.example.algamoney.api.resource;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +30,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.example.algamoney.api.dto.Anexo;
 import com.example.algamoney.api.dto.LancamentoEstatisticaCategoria;
 import com.example.algamoney.api.dto.LancamentoEstatisticaDia;
 import com.example.algamoney.api.event.RecursoCriadoEvent;
@@ -41,6 +44,7 @@ import com.example.algamoney.api.repository.filter.LancamentoFilter;
 import com.example.algamoney.api.repository.projection.ResumoLancamento;
 import com.example.algamoney.api.service.LancamentoService;
 import com.example.algamoney.api.service.exception.PessoaInexistenteOuInativaException;
+import com.example.algamoney.api.storage.S3;
 
 @RestController
 @RequestMapping("/lancamentos")
@@ -57,6 +61,37 @@ public class LancamentoResource {
 	
 	@Autowired
 	private MessageSource messageSource;
+	
+	@Autowired
+	private S3 s3;
+	
+	// no nosso caso, o parâmetro "anexo" em @RequestParam poderia ser omitido se utilizarmos o próprio no 
+	// da variável em MultipartFile;
+	// Esse nome "anexo" é o nome que deve ser definido na chamada da API (ver no postman)
+	@PostMapping("/anexo")
+	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_LANCAMENTO') and #oauth2.hasScope('write')")
+	public Anexo uploadAnexo(@RequestParam("anexo") MultipartFile anexo) throws IOException {
+		String nome = s3.salvarTemporariamente(anexo);
+		return new Anexo(nome, s3.configurarUrl(nome));
+		// dessa forma a API retornará um JSon do tipo abaixo, por exemplo:
+//		{
+//		    "nome": "8c549aa3-273a-4dd3-99ee-8980d4446476_ARQ-TESTE-PARA-UPLOAD.pdf",
+//		    "url": "\\\\rapl-arquivos.s3.amazonaws.com/8c549aa3-273a-4dd3-99ee-8980d4446476_ARQ-TESTE-PARA-UPLOAD.pdf"
+//		}
+	}
+	
+//	// no nosso caso, o parâmetro "anexo" em @RequestParam poderia ser omitido se utilizarmos o próprio no 
+//	// da variável em MultipartFile;
+//	// Esse nome "anexo" é o nome que deve ser definido na chamada da API (ver no postman)
+//	@PostMapping("/anexo")
+//	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_LANCAMENTO') and #oauth2.hasScope('write')")
+//	public String uploadAnexo(@RequestParam("anexo") MultipartFile anexo) throws IOException {
+//		OutputStream out = new FileOutputStream(
+//				"/Angular/workspace/upload/anexo--" + anexo.getOriginalFilename());
+//		out.write(anexo.getBytes());
+//		out.close();
+//		return "ok";
+//	}
 	
 	@GetMapping("/relatorios/por-pessoa")
 	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
@@ -129,7 +164,7 @@ public class LancamentoResource {
 	@GetMapping("/{codigo}")
 	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
 	public ResponseEntity<Lancamento> buscarPeloCodigo(@PathVariable Long codigo) {
-		System.out.println(">>>> Pesquisou por código...");
+//		System.out.println(">>>> Pesquisou por código...");
 		Lancamento lancamento = acessarLancamentoPorCodigo(codigo);
 		return lancamento != null ? ResponseEntity.ok(lancamento) : ResponseEntity.notFound().build();
 	}

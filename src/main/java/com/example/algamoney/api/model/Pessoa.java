@@ -38,9 +38,12 @@ public class Pessoa {
 	//  Se não colocarmos o @JsonIgnoreProperties haverá chamada recursiva e entrará em loop, poi Contato faz referência 
 	// 	a Pessoa.java
 	// Atente que a tabela Pessoa não tem o campo contato. Existe a tabela Contato, onde na chave tem o códgio da pessoa
-	@JsonIgnoreProperties("pessoa")
+	// a opção orphanRemoval = true faz com que o contato seja removido se estiver zerado (usado na atualização) ou
+	// melhor, os itens que não estiverem na base de dados será excluído. Obs: para funcionar ver as alterações
+	// em PessoaService.java no método public Pessoa atualizar
+	@JsonIgnoreProperties("pessoa")		// ignora a propriedade pessoa que está em contato
 	@Valid
-	@OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Contato> contatos;
 	
 	public List<Contato> getContatos() {
