@@ -1,0 +1,416 @@
+3.8. Validando atributos desconhecidos
+--------------------------------------
+*	quando não existir o atributo, a propriedade spring.jackson.deserialization.fail-on-unknown-properties=true
+	em application.properties estiver marcada com true, não irá permitir o envio de "novo" campos que não estejam
+	definidos na classe de recepção.
+
+3.9. Tratando erros com ExceptionHandler
+----------------------------------------
+*	Criado a classe AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler
+*	injetar @ControllerAdvice na classe
+*	criado o arquivo messages.propoerties onde foi incluído a mensagem para ser aplicada na classe AlgamoneyExceptionHandler
+*	incluir tramento da mensagem para o campo obrigatório em ValidationMessages.properties
+
+3.10. Validando valores inválidos com Bean Validation
+-----------------------------------------------------
+*	incluir o parâmetro @NotNull na classe Categoria.java
+*	em CategoriaResource.java incluir a injeção @Valid
+*	em AlgamoneyExceptionHandler, criar método criarListaDeErros e incluir chamada desse método 
+	no método  handleMethodArgumentNotValid
+*	em messages.properties, inluir categoria.nome=Nome que dará nome ao campo da classe Categoria.java para ser utilizada
+	na passagem da mensagem de erro, em vez de passar o nome do campo original.
+*	incluir tramento da mensagem para o tamanho do campo em ValidationMessages.properties
+
+3.12. Usando eventos para adicionar header Location
+---------------------------------------------------
+*	criar public class RecursoCriadoEvent extends ApplicationEvent{
+*	criar public class RecursoCriadoListener implements ApplicationListener<RecursoCriadoEvent>{
+*	injetar @Autowired private ApplicationEventPublisher publisher; nas classes PessoasResource.java e CategoriaResource.java
+*	chamar método de acionar o evento (ver exemplo abaixo):
+	publisher.publishEvent(new RecursoCriadoEvent(this, response, pessoaSalva.getCodigo()));	
+	return ResponseEntity.status(HttpStatus.CREATED).body(pessoaSalva);
+	
+4.1. Removendo pessoa com DELETE
+--------------------------------
+*	criado método em PessoaResource.java: public void remover (@PathVariable Long codigo)
+*	criado método em AlgamoneyExceptionHandler para tratar a exceção lançada quando se tenta excluir um registros
+	que não existe na base: public void handleEmptyResultDataAccessException (RuntimeException ex)
+	
+5.2. Desafio: Lista e busca de lançamentos
+------------------------------------------
+*	É preciso importar as dependências do jova 8 para o suporte dos campos de data no pow.xml
+		<!-- Hibernate Java 8 Support -->
+		<dependency>
+    		<groupId>org.hibernate</groupId>
+    		<artifactId>hibernate-java8</artifactId>
+		</dependency>
+		
+		<!-- Suporte do Jackson para as datas do Java 8 -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+*	Altera application.properties para incluir a mensagem e formatação do campo de data
+
+5.4. Validando inconsistências
+------------------------------
+*	criado em AlgamoneyExceptionHandler o tratamento para a exceção de erro do banco de dados:
+	@ExceptionHandler({ DataIntegrityViolationException.class } )
+*	incluído em messages.properties:
+	recurso.operacao-nao-permitida=Opera\u00E7\u00E3o n\u00E3o permitida
+*	Para tratar as mensagens de exceção de erro do banco de dados de uma melhor forma, importar no pow.xml:
+	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-lang3</artifactId>
+		<version>3.4</version>
+	</dependency>
+	
+5.6. Regra para não salvar pessoa inativa
+-----------------------------------------
+*	criado LancamentoService.java
+*	alterado método public ResponseEntity<Lancamento> criar para acessar LancamentoService
+*	LancamentoService lança exceção PessoaInexistenteOuInativaException
+*	criado a classe PessoaInexistenteOuInativaException.java
+*	criado @ExceptionHandler({ PessoaInexistenteOuInativaException.class }) em LancamentoResource.java para 
+	tratar a exceção. Poderia ser incluída na classe AlgamoneyExceptionHandler.java, mas por ser uma exceção
+	bem específica do lançamento, optamos em colocar na classe LancamentoResource
+	
+6.5. Configurando JWT no projeto
+--------------------------------
+*	Incluir dependência no pow.xml
+
+6.11. Movendo o usuário para o banco de dados
+---------------------------------------------
+*	alterar ResourceServerConfig.java, método public void configure(AuthenticationManagerBuilder auth)
+*	criado método public PasswordEncoder passwordEncoder()
+*	criado classe AppUserDetailsService.java implements UserDetailsService
+*	
+
+6.12. Adicionando permissões de acesso
+--------------------------------------
+*	adiconar no ResourceServerConfig.java incluir @EnableGlobalMethodSecurity(prePostEnabled = true) 
+	para habilitar a segurança nos métodos.
+*	adionar um novo @Bean . O método public MethodSecurityExpressionHandler createExpressionHandler()
+*	Em CategoriaResource.java adicionar as permissões.
+*	adicionado nova client em configuração em AuthorizationServerConfig.java
+
+6.14. Implementando o logout
+----------------------------
+*	A ideia é retirar o refresh_token do cookie
+
+7.1. Implementando projeção de lançamento
+-----------------------------------------
+*	É uma limitação de quais campos é preciso retornar na consulta.
+*	criado método public Page<ResumoLancamento> resumir(LancamentoFilter lancamentoFilter, Pageable pageable);
+	em LancamentoRepositoryQuery
+*	criado método public Page<ResumoLancamento> resumir(LancamentoFilter lancamentoFilter, Pageable pageable) {
+	em LancamentoRepositoryImpl
+*	criado método public Page<ResumoLancamento> resumir(LancamentoFilter lancamentoFilter, Pageable pageable) {
+	em LancamentoResource
+	
+7.2. Profiles do Spring
+-----------------------
+*	criado classe AlgamoneyApiProperty.java
+*	alterar classe AlgamoneyApiApplication injetando a propriedade @EnableConfigurationProperties(AlgamoneyApiProperty.class)
+*	altgerar arquivo application.proporties 
+
+7.4. Deploy da API na nuvem
+---------------------------
+*	abrir a pasta do diretório do projeto: C:\Angular\workspace\algamoney-api
+*	git init
+*	git status
+*	git add .
+*	git commit -m 'Primeiro Commit'
+
+***
+	heroku restart -a roberto-algamoney-api					para restart
+
+*	heroku create roberto-algamoney-api
+	
+	C:\Angular\workspace\algamoney-api>heroku create roberto-algamoney-api
+	Creating ⬢ roberto-algamoney-api... done
+	https://roberto-algamoney-api.herokuapp.com/ | https://git.heroku.com/roberto-algamoney-api.git
+	
+	heroku addons:create jawsdb
+	
+	C:\Angular\workspace\algamoney-api>heroku addons:create jawsdb
+	Creating jawsdb on ⬢ roberto-algamoney-api... free
+	Database is being provisioned. Your config_var will be set automatically once available.
+	Created jawsdb-round-49321 as JAWSDB_URL
+	Use heroku addons:docs jawsdb to view documentation
+	
+	heroku config:get JAWSDB_URL
+	
+	C:\Angular\workspace\algamoney-api>heroku config:get JAWSDB_URL
+	mysql://ijp8a9w1afxl03q0:un4sqgziayqp58i4@ffn96u87j5ogvehy.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/szf9hvv5xhsn76oz
+	
+	heroku config:set JDBC_DATABASE_URL=ffn96u87j5ogvehy.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/szf9hvv5xhsn76oz JDBC_DATABASE_USERNAME=ijp8a9w1afxl03q0 JDBC_DATABASE_PASSWORD=un4sqgziayqp58i4
+
+	C:\Angular\workspace\algamoney-api>heroku config:set JDBC_DATABASE_URL=ffn96u87j5ogvehy.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/szf9hvv5xhsn76oz JDBC_DATABASE_USERNAME=ijp8a9w1afxl03q0 JDBC_DATABASE_PASSWORD=un4sqgziayqp58i4
+	Setting JDBC_DATABASE_URL, JDBC_DATABASE_USERNAME, JDBC_DATABASE_PASSWORD and restarting ⬢ roberto-algamoney-api... done, v6
+	JDBC_DATABASE_PASSWORD: un4sqgziayqp58i4
+	JDBC_DATABASE_URL:      ffn96u87j5ogvehy.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/szf9hvv5xhsn76oz
+	JDBC_DATABASE_USERNAME: ijp8a9w1afxl03q0
+	
+	heroku config		traz as veriáveis definidas no ambiente
+	
+	
+	
+	git push heroku master			envia para o heroku o projeto
+	
+	Abaixo parte do log gerado pelo comando acima:
+	remote:        [INFO] Installing /tmp/build_c304cde62ca5ac4fda50f8a2bbbca7be/pom.xml to /app/tmp/cache/.m2/repository/com/algaworks/algamoney-api/algamoney-api/1.0.0-SNAPSHOT/algamoney-api-1.0.0-SNAPSHOT.pom
+	remote:        [INFO] ------------------------------------------------------------------------
+	remote:        [INFO] BUILD SUCCESS
+	remote:        [INFO] ------------------------------------------------------------------------
+	remote:        [INFO] Total time:  19.875 s
+	remote:        [INFO] Finished at: 2019-03-22T00:09:53Z
+	remote:        [INFO] ------------------------------------------------------------------------
+	remote: -----> Discovering process types
+	remote:        Procfile declares types -> web
+	remote:
+	remote: -----> Compressing...
+	remote:        Done: 83.7M
+	remote: -----> Launching...
+	remote:        Released v7
+	remote:        https://roberto-algamoney-api.herokuapp.com/ deployed to Heroku
+	remote:
+	remote: Verifying deploy... done.
+	To https://git.heroku.com/roberto-algamoney-api.git
+	 * [new branch]      master -> master
+	
+	heroku logs --tail				para ver o log gerado
+	
+*** https://roberto-algamoney-api.herokuapp.com
+
+
+===>>>> script da conexão com o banco de dados heroku
+
+spring.jpa.database=MYSQL
+spring.datasource.url=jdbc:mysql://ffn96u87j5ogvehy.cbetxkdyhwsb.us-east-1.rds.amazonaws.com/szf9hvv5xhsn76oz?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.username=ijp8a9w1afxl03q0
+spring.datasource.password=un4sqgziayqp58i4
+
+spring.jpa.show-sql=true
+
+spring.jackson.deserialization.fail-on-unknown-properties=true
+
+spring.jackson.date-format=yyyy-MM-dd
+
+spring.profiles.active=oauth-security
+
+===>>>> script da conexão com o banco de dados algamoney-api
+
+spring.jpa.database=MYSQL
+spring.datasource.url=jdbc:mysql://localhost/algamoneyapi?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.username=root
+spring.datasource.password=root
+
+spring.jpa.show-sql=true
+
+spring.jackson.deserialization.fail-on-unknown-properties=true
+
+spring.jackson.date-format=yyyy-MM-dd
+
+spring.profiles.active=oauth-security
+
+
+
+22.6. Instalando o Jaspersoft Studio
+------------------------------------
+*	acessar site: https://community.jaspersoft.com/download
+*	entrar em download community
+*	baixar Jaspersoft® Studio CE
+*	selecionar a versaõ do seu sistema operacional
+
+*	Obs.: é preciso importar em librays o .jar original do projeto (que está na pasta target)
+		  Caminho: Build Path / Configure Build Path...
+		  em Java Build Path, clicar em Add External JARs... e importar o .JAR
+
+*	Em resouces, cria a pasta relatorios ( fazer isso na API )
+*	Em JasperSoft, compilar o relatório. Abrir o fonte do relatórios e clicar no botão "Compile Report" e
+	copiá-lo para a pasta relatorios ( na API )
+	
+* 	Incluir em pom.xml:
+	<properties>
+		:
+		:
+		<jasperreports.version>6.5.1</jasperreports.version>
+	    <jasperreports-functions.version>6.5.1</jasperreports-functions.version>
+	    <jasperreports-fonts.version>6.0.0</jasperreports-fonts.version>
+	</properties>
+	
+	<dependencies>
+		:
+		:
+		<!-- JasperReports -->
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <version>${jasperreports.version}</version>
+        </dependency>
+                
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports-functions</artifactId>
+            <version>${jasperreports-functions.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports-fonts</artifactId>
+            <version>${jasperreports-fonts.version}</version>
+        </dependency>
+	</dependencies>
+	
+	<repositories>
+        <repository>
+            <id>jr-ce-releases</id>
+            <url>http://jaspersoft.artifactoryonline.com/jaspersoft/jr-ce-releases</url>
+        </repository>
+    </repositories>
+	
+*	No postman, criar a chamada: http://localhost:8080/lancamentos/relatorios/por-pessoa?inicio=2019-01-01&fim=2019-05-31
+	em seguida, fazer download do response e abri-lo em PDF
+	
+22.15. Criando um agendamento de tarefa (Scheduler)
+---------------------------------------------------
+
+*	São tarefas que ficam rodando no background da aplicação a fim de efetuar uma funcuinalidade qualquer, como envio de aviso, email, etc
+	Estes serviços ficam rodando independente de chamada externa.
+*	Será preciso criar uma classe de configuração para habilitar o schedule
+*	Criado a classe: WebConfig.java
+	
+22.16. Configurando o envio de e-mail
+-------------------------------------
+
+*	importar em pom.xml:
+	<dependencies>
+		:
+		:
+		<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+	</dependencies>
+
+*	Criar a classe config/MailConfig.java
+*	Configurara a classe config/property/AlgamoneyApiProperty.java, inserindo as informações de public static class Mail
+*	Configurar a classe src/main/resources/application.propeties
+*	Criar a classe mail/Mailer.java que será um componente.
+*	Criado a classe MailConfig.java
+*	Para testar é preciso reduzir a segurança do google via site "https://myaccount.google.com/lesssecureapps"
+
+22.19. Processando o template e enviando o e-mail
+-------------------------------------------------
+
+*	configurar o pom.xml para importar o thymeleaf
+	<properties>
+		:
+		:
+		<!-- Versões thymeleaf -->
+		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
+		<thymeleaf-layout-dialect.version>2.2.2</thymeleaf-layout-dialect.version>
+		<thymeleaf-extras-data-attribute.version>2.0.1</thymeleaf-extras-data-attribute.version>
+		<thymeleaf-extras-java8time.version>3.0.0.RELEASE</thymeleaf-extras-java8time.version>
+	</properties>
+
+	<!-- thymeleaf -->
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-thymeleaf</artifactId>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.thymeleaf.extras</groupId>
+		<artifactId>thymeleaf-extras-java8time</artifactId>
+	</dependency>
+	
+	
+22.26. Usando a propriedade orphanRemoval
+-----------------------------------------
+*	Quando or exemplo remover o contato na chamada da atualização e forçar que o backend remova o contato
+
+
+22.28. Upload de arquivos para API
+----------------------------------
+*	Altera a classe LancamentoResource
+*	Criado em LancamentoResource o método public String uploadAnexo(@RequestParam("anexo") MultipartFile anexo)
+*	Criado no postman a chamada POST http://localhost:8080/lancamentos/anexo com o parâmetro Body/form-data do tipo files
+
+22.30. Configurando o serviço S3
+--------------------------------
+
+*	Criar a classe em config/MailConfig
+*	Alterar a classe AlgamoneyApiProperty.java e incluir a classe public static class S3 e definir a variável private final S3 s3 = new S3();
+*	Configurar pom.xml
+
+	<properties>
+		:
+		:
+        <!-- Versão AWS -->
+        <aws-java-sdk.version>1.11.274</aws-java-sdk.version>
+	</properties>
+	
+	<!-- Amazon S3 -->
+	<dependencies>
+		:
+		:
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>${aws-java-sdk.version}</version>
+        </dependency>
+        
+	</dependencies>
+	
+*	Configurar Application.properties
+* 	classe envolvidas para o envio do serviço S3:
+	LancamentoResource.java
+	S3Config.java
+	AlgamoneyApiProperty.java
+	apllication.properties
+	S3.java
+	Anexo.java
+
+22.34. Anexando arquivo no lançamento
+-------------------------------------
+
+*	Como associar o anexo enviado ao registro de lançamento:
+	1. alterar a entidade lançamento para incluir a propriedade anexo e url com seus getters e setters;
+	2. alterar a classe LancamentoService para injetar a classe S3 e gravar o anexo em definitivo;
+	3. Ajustar o método salvar em LancamentoService;
+	4. Criar novo método salvar em S3 para savar em definitivo;
+	5. Na API http://localhost:8080/lancamentos incluído o arquivo anexo para a atualização e retirada da tag
+	   Exemplo:
+	   {
+			"descricao": "Curso Inglês",
+			"dataVencimento": "2019-05-21",
+			"dataPagamento": "2019-05-21",
+			"valor": 320.00,
+			"observacao": "Período de maio",
+			"tipo": "DESPESA",
+			"categoria": {
+				"codigo": 3
+			},
+			"pessoa": {
+				"codigo": 22
+			},
+			"anexo": "d58b8e47-d600-4db6-b11c-2c57aabdb255_ARQ-TESTE-PARA-UPLOAD.pdf"
+		}
+
+22.35. Atualizando e removendo anexo
+------------------------------------
+*	Para ajustar um método em um lancamento já existente:
+	1. Em LancamentoService, alterar o método atualizar para permitir a inclusão ou alteração de um anexo;
+	
+22.36. Configurando URL do anexo
+--------------------------------
+
+*	No nosso exemplo, vamos criar um listenning para que toda vez que se carregar os lançamentos seja feito o preenchimento da URL
+*	Criar o pacote "listener" na classe repository e criar a classe LancamentoAnexoListener.java;
+*	Alterar a classe AlgamoneyApiApplication para criar o atributo ApplicationContext que será utlizado no listener da geração da URL
+*	Para que o LancamentoAnexoListener funcione, é preciso injetar na entidade Lancamento.java a injeção 
+	@EntityListeners(LancamentoAnexoListener.class)
