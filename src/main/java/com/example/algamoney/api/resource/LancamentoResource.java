@@ -1,6 +1,8 @@
 package com.example.algamoney.api.resource;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -71,8 +73,12 @@ public class LancamentoResource {
 	@PostMapping("/anexo")
 	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_LANCAMENTO') and #oauth2.hasScope('write')")
 	public Anexo uploadAnexo(@RequestParam("anexo") MultipartFile anexo) throws IOException {
+		
+		System.out.println(">>> entrou em uploadAnexo " + anexo);
+		
 		String nome = s3.salvarTemporariamente(anexo);
 		return new Anexo(nome, s3.configurarUrl(nome));
+		
 		// dessa forma a API retornará um JSon do tipo abaixo, por exemplo:
 //		{
 //		    "nome": "8c549aa3-273a-4dd3-99ee-8980d4446476_ARQ-TESTE-PARA-UPLOAD.pdf",
@@ -80,18 +86,18 @@ public class LancamentoResource {
 //		}
 	}
 	
-//	// no nosso caso, o parâmetro "anexo" em @RequestParam poderia ser omitido se utilizarmos o próprio no 
-//	// da variável em MultipartFile;
-//	// Esse nome "anexo" é o nome que deve ser definido na chamada da API (ver no postman)
-//	@PostMapping("/anexo")
-//	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_LANCAMENTO') and #oauth2.hasScope('write')")
-//	public String uploadAnexo(@RequestParam("anexo") MultipartFile anexo) throws IOException {
-//		OutputStream out = new FileOutputStream(
-//				"/Angular/workspace/upload/anexo--" + anexo.getOriginalFilename());
-//		out.write(anexo.getBytes());
-//		out.close();
-//		return "ok";
-//	}
+	// no nosso caso, o parâmetro "anexo" em @RequestParam poderia ser omitido se utilizarmos o próprio no 
+	// da variável em MultipartFile;
+	// Esse nome "anexo" é o nome que deve ser definido na chamada da API (ver no postman)
+	@PostMapping("/anexo-diretorio")
+	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_LANCAMENTO') and #oauth2.hasScope('write')")
+	public String uploadAnexo2(@RequestParam("anexo") MultipartFile anexo) throws IOException {
+		OutputStream out = new FileOutputStream(
+				"/Angular/workspace/upload/anexo--" + anexo.getOriginalFilename());
+		out.write(anexo.getBytes());
+		out.close();
+		return "ok";
+	}
 	
 	@GetMapping("/relatorios/por-pessoa")
 	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
@@ -114,7 +120,7 @@ public class LancamentoResource {
 	@GetMapping("/estatisticas/por-categoria")
 	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
 	public List<LancamentoEstatisticaCategoria> porCategoria () {
-		return lancamentoRepository.porCategoria(LocalDate.now());
+		return lancamentoRepository.estatisticaPorCategoria(LocalDate.now());
 	}
 	
 	@PostMapping

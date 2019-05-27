@@ -34,8 +34,10 @@ public class S3 {
 	
 	@Autowired
 	private AmazonS3 amazonS3;
-	
+		
 	public String salvarTemporariamente(MultipartFile arquivo) {
+		
+		System.out.println(">>>>> S3 salvarTemporariamente");
 		
 		// criou a instância onde diz que o objecto pode ser lido
 		AccessControlList acl = new AccessControlList();

@@ -414,3 +414,29 @@ spring.profiles.active=oauth-security
 *	Alterar a classe AlgamoneyApiApplication para criar o atributo ApplicationContext que será utlizado no listener da geração da URL
 *	Para que o LancamentoAnexoListener funcione, é preciso injetar na entidade Lancamento.java a injeção 
 	@EntityListeners(LancamentoAnexoListener.class)
+
+
+24.2. Criando pesquisa de estados e cidades
+===========================================
+
+*	Construlir os controladores de Cidade e Estado;
+*	Criar os repositórios;
+*	Criar os resources;
+*	
+
+25.1. Atualizando para Spring Boot 2
+====================================
+
+*	
+
+===================================================================================================================================================
+Gerando o código executável: Executar na pasta raiz do projeto: 
+	
+	mvn package
+
+Executar na pasta target:
+
+	java -jar algamoney-api-1.0.0-SNAPSHOT.jar --spring.datasource.username=root --spring.datasource.password=root --algamoney.origin-permitida=http://localhost:4200 --spring.profiles.active-oauth-security
+	
+Para abrir o sistema: localhost:4200
+	

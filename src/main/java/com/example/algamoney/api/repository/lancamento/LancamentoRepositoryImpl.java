@@ -40,7 +40,7 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
 	private EntityManager manager;
 	
 	@Override
-	public List<LancamentoEstatisticaPessoa> porPessoa(LocalDate inicio, LocalDate fim) {
+	public List<LancamentoEstatisticaPessoa> relatorioPorPessoa(LocalDate inicio, LocalDate fim) {
 		CriteriaBuilder criteriaBuilder = manager.getCriteriaBuilder();
 		
 		CriteriaQuery<LancamentoEstatisticaPessoa> criteriaQuery = criteriaBuilder.
@@ -69,7 +69,7 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
 	}
 	
 	@Override
-	public List<LancamentoEstatisticaCategoria> porCategoria(LocalDate mesReferencia) {
+	public List<LancamentoEstatisticaCategoria> estatisticaPorCategoria(LocalDate mesReferencia) {
 
 		CriteriaBuilder criteriaBuilder = manager.getCriteriaBuilder();
 		

@@ -103,7 +103,7 @@ public class LancamentoService {
 	
 	public byte[] relatorioPorPessoa(LocalDate inicio, LocalDate fim) throws Exception {
 		
-		List<LancamentoEstatisticaPessoa> dados = lancamentoRepository.porPessoa(inicio, fim);
+		List<LancamentoEstatisticaPessoa> dados = lancamentoRepository.relatorioPorPessoa(inicio, fim);
 		
 		// obs.: java.sql.Date extend de java.util.Date
 		Map<String, Object> parametros = new HashMap<>();
