@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -155,7 +156,8 @@ public class LancamentoService {
 	private void validarPessoa(Lancamento lancamento) {
 		Pessoa pessoa = null;
 		if (lancamento.getPessoa().getCodigo() != null) {
-			pessoa = pessoaRepository.findOne(lancamento.getPessoa().getCodigo());
+			pessoa = pessoaRepository.getOne(lancamento.getPessoa().getCodigo());
+//			pessoa = pessoaRepository.findOne(lancamento.getPessoa().getCodigo());
 		}
 
 		if (pessoa == null || pessoa.isInativo()) {
@@ -164,10 +166,13 @@ public class LancamentoService {
 	}
 	
 	private Lancamento buscarLancamentoExistente(Long codigo) {
-		Lancamento lancamentoSalvo = lancamentoRepository.findOne(codigo);
-		if (lancamentoSalvo == null) {
+		Optional<Lancamento> lancamentoSalvo = lancamentoRepository.findById(codigo);
+//		Lancamento lancamentoSalvo = lancamentoRepository.findOne(codigo);
+//		if (lancamentoSalvo == null) {
+		if (!lancamentoSalvo.isPresent()) {
 			throw new IllegalArgumentException();
 		}
-		return lancamentoSalvo;
+		return lancamentoSalvo.get();
+//		return lancamentoSalvo;
 	}
 }

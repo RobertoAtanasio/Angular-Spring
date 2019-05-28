@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
@@ -21,24 +21,26 @@ import com.example.algamoney.api.config.token.CustomTokenEnhancer;
 
 @Profile("oauth-security")
 @Configuration
-@EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
 	
+	@Autowired
+	private UserDetailsService userDetailsService;
+	
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 		clients.inMemory()
 			.withClient("angular")
-			.secret("angular0")
+			.secret("$2a$10$Nyrj9biofcOvj9PwIn7bsu70ju17mxG9.DUL4OUi22FWUGBqwLGWO")		// angular0
 			.scopes("read", "write")
 			.authorizedGrantTypes("password", "refresh_token")
 			.accessTokenValiditySeconds(60000)
 			.refreshTokenValiditySeconds(18000)
 		.and()
 			.withClient("mobile")
-			.secret("mobile0")
+			.secret("$2a$10$S.U0DxO.Fbti2hbuadAIWu.cW.a3VTqPLR/6Zb7VEFEjeQRoXglky")		// mobile0
 			.scopes("read")
 			.authorizedGrantTypes("password", "refresh_token")
 			.accessTokenValiditySeconds(600)
@@ -57,6 +59,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		.tokenStore(tokenStore())
 		.tokenEnhancer(tokenEnhancerChain)
 		.reuseRefreshTokens(false)
+		.userDetailsService(userDetailsService)
 		.authenticationManager(authenticationManager);
 	}
 	

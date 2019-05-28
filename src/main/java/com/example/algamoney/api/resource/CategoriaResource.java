@@ -1,6 +1,7 @@
 package com.example.algamoney.api.resource;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -81,9 +82,10 @@ public class CategoriaResource {
 	@GetMapping("/{codigo}")
 	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_CATEGORIA') and #oauth2.hasScope('read')")
 	public ResponseEntity<?> buscarPeloCodigo (@PathVariable Long codigo) {
-		Categoria categoriaLida = categoriaRepository.findOne(codigo);
+		Optional<Categoria> categoriaLida = categoriaRepository.findById(codigo);
+//		Categoria categoriaLida = categoriaRepository.findOne(codigo);
 		//--- caso não encontre, retornará erro 404 Not Found
-		return categoriaLida != null ? ResponseEntity.ok(categoriaLida) : ResponseEntity.notFound().build();
+		return categoriaLida.isPresent() ? ResponseEntity.ok(categoriaLida.get()) : ResponseEntity.notFound().build();
 	}
 
 }

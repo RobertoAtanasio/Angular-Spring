@@ -422,12 +422,64 @@ spring.profiles.active=oauth-security
 *	Construlir os controladores de Cidade e Estado;
 *	Criar os repositórios;
 *	Criar os resources;
-*	
 
 25.1. Atualizando para Spring Boot 2
 ====================================
 
-*	
+*	pom.xml	
+	Alterar de:
+	<parent>
+		:
+		<version>2.0.2.RELEASE</version>
+	</parent>
+
+	<properties>
+		:
+		<spring-security-oauth2.version>2.2.1.RELEASE</spring-security-oauth2.version>
+		<spring-security-jwt.version>1.0.9.RELEASE</spring-security-jwt.version>
+		:
+	</properties>
+	
+*	As versões do thymeleaf não precisam mais ser especificadas. Foram retiradas. Ver abaixo:
+	<properties>
+		:
+		<!-- Versões thymeleaf -->
+		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
+		<thymeleaf-layout-dialect.version>2.2.2</thymeleaf-layout-dialect.version>
+		<thymeleaf-extras-data-attribute.version>2.0.1</thymeleaf-extras-data-attribute.version>
+		<thymeleaf-extras-java8time.version>3.0.0.RELEASE</thymeleaf-extras-java8time.version>
+		:
+	</properties>
+	
+*	Criar a classe config/OAuthSecurityConfig.java
+*	Retirar da classe AuthorizationServerConfig.java a anotação @EnableAuthorizationServer e copiá-la
+	em OAuthSecurityConfig.java
+*	Retirar da classe ResourceServerConfig.java as anotações @EnableWebSecurity, @EnableResourceServer
+	@EnableGlobalMethodSecurity(prePostEnabled = true) e coiá-las em OAuthSecurityConfig.java
+*	Remover da classe ResourceServerConfig.java as injeções:
+	@Autowired
+	private UserDetailsService userDetailsService;
+	
+	@Autowired
+	public void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+	}
+*	Retirar da classe ResourceServerConfig.java o método:
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+	e copiá-lo em OAuthSecurityConfig.java
+*	Alterar AuthorizationServerConfig.java e incluir os métodos:
+	@Autowired
+	private UserDetailsService userDetailsService;
+*	Altera o método public void configure(AuthorizationServerEndpointsConfigurer endpoints) 
+	para incluir em endpoints a anotação .userDetailsService(userDetailsService)
+*	A SENHA EM AuthorizationServerConfig.java PRECISA FICAR ENCRIPTOGRAFADA DE ACORDO COM O ENCODE
+	Logo, abrir a classe security/util/GeradorSenha.java
+	Alterar o método public void configure(ClientDetailsServiceConfigurer clients)
+	e colocar a senha encriptografada no parâmetro .secrete('$2a$10$Nyrj9biofcOvj9PwIn7bsu70ju17mxG9.DUL4OUi22FWUGBqwLGWO')
+	
 
 ===================================================================================================================================================
 Gerando o código executável: Executar na pasta raiz do projeto: 
@@ -439,4 +491,12 @@ Executar na pasta target:
 	java -jar algamoney-api-1.0.0-SNAPSHOT.jar --spring.datasource.username=root --spring.datasource.password=root --algamoney.origin-permitida=http://localhost:4200 --spring.profiles.active-oauth-security
 	
 Para abrir o sistema: localhost:4200
+
+========
+
+Properties/Java Compiler/Annotation Processing/Factory Path
+
+C:\Users\Cli\.m2\repository\org\hibernate\hibernate-jpamodelgen\5.3.7.Final
+
+
 	

@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -170,9 +171,8 @@ public class LancamentoResource {
 	@GetMapping("/{codigo}")
 	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
 	public ResponseEntity<Lancamento> buscarPeloCodigo(@PathVariable Long codigo) {
-//		System.out.println(">>>> Pesquisou por código...");
-		Lancamento lancamento = acessarLancamentoPorCodigo(codigo);
-		return lancamento != null ? ResponseEntity.ok(lancamento) : ResponseEntity.notFound().build();
+		Optional<Lancamento> lancamento = acessarLancamentoPorCodigo(codigo);
+		return lancamento.isPresent() ? ResponseEntity.ok(lancamento.get()) : ResponseEntity.notFound().build();
 	}
 	
 //	@DeleteMapping("/{codigo}")
@@ -184,16 +184,18 @@ public class LancamentoResource {
 	@DeleteMapping("/{codigo}")
 	@PreAuthorize("hasAuthority('ROLE_REMOVER_LANCAMENTO') and #oauth2.hasScope('write')")
 	public ResponseEntity<Object> remover(@PathVariable Long codigo) {
-		Lancamento lancamento = acessarLancamentoPorCodigo(codigo);
-		if (lancamento != null) {
-			lancamentoRepository.delete(codigo);
+		Optional<Lancamento> lancamento = acessarLancamentoPorCodigo(codigo);
+		if (lancamento.isPresent()) {
+			lancamentoRepository.deleteById(codigo);
+//			lancamentoRepository.delete(codigo);
 			return ResponseEntity.ok(new Mensagem("Registro Excluído com Sucesso!"));
 		} 
 		return ResponseEntity.noContent().build();
 	}
 	
-	private Lancamento acessarLancamentoPorCodigo(Long codigo) {
-		Lancamento lancamento = lancamentoRepository.findOne(codigo);
+	private Optional<Lancamento> acessarLancamentoPorCodigo(Long codigo) {
+		Optional<Lancamento> lancamento = lancamentoRepository.findById(codigo);
+//		Lancamento lancamento = lancamentoRepository.findOne(codigo);
 		return lancamento;
 	}
 
