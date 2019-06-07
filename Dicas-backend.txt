@@ -520,8 +520,8 @@ application.properties
 	algamoney.mail.host=smtp.gmail.com
 	algamoney.mail.port=587
 	algamoney.mail.username=roberto.atanasio.pl@gmail.com
-	algamoney.mail.password=@@Egito001
+	algamoney.mail.password=...
 
-	algamoney.s3.access-key-id=AKIAIZGR7NCDY6OWWZGA
-	algamoney.s3.secret-access-key=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
+	algamoney.s3.access-key-id=...
+	algamoney.s3.secret-access-key=...
 		
