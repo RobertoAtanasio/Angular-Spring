@@ -3,6 +3,8 @@
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -18,17 +20,31 @@ import com.amazonaws.services.s3.model.lifecycle.LifecycleTagPredicate;
 import com.example.algamoney.api.config.property.AlgamoneyApiProperty;
 
 @Configuration
+@PropertySource(value = { "file:\\C:\\opt\\.angular-s3.properties" }, ignoreResourceNotFound = true)
 public class S3Config {
 
 	@Autowired
 	private AlgamoneyApiProperty property;
 	
+	@Autowired
+	private Environment env;
+	
 	@Bean
 	public AmazonS3 amazonS3() {
 		
+//		System.out.println(">>>>> AWS_ACCESS_KEY_ID: "+ env.getProperty("AWS_ACCESS_KEY_ID"));
+//		System.out.println(">>>>> AWS_SECRET_ACCESS_KEY: "+ env.getProperty("AWS_SECRET_ACCESS_KEY"));
+		
+//		System.out.println(">>>>> property.getS3().getAccessKeyId(): " + property.getS3().getAccessKeyId());
+//		System.out.println(">>>>> property.getS3().getSecretAccessKey(): " + property.getS3().getSecretAccessKey());
+		
+//		// acesso das credenciais
+//		AWSCredentials credenciais = new BasicAWSCredentials(
+//				property.getS3().getAccessKeyId(), property.getS3().getSecretAccessKey());
+		
 		// acesso das credenciais
 		AWSCredentials credenciais = new BasicAWSCredentials(
-				property.getS3().getAccessKeyId(), property.getS3().getSecretAccessKey());
+				env.getProperty("AWS_ACCESS_KEY_ID"), env.getProperty("AWS_SECRET_ACCESS_KEY"));
 	
 		// instanciação da classe de envio		
 		AmazonS3 amazonS3 = AmazonS3ClientBuilder.standard()

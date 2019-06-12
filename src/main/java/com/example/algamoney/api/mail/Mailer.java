@@ -72,14 +72,10 @@ public class Mailer {
 	public void enviarEmail(String remetente, 
 			List<String> destinatarios, String assunto, String template, 
 			Map<String, Object> variaveis) {
-		
 		Context context = new Context(new Locale("pt", "BR"));
-		
 		variaveis.entrySet().forEach(
 				e -> context.setVariable(e.getKey(), e.getValue()));
-		
 		String mensagem = thymeleaf.process(template, context);
-		
 		this.enviarEmail(remetente, destinatarios, assunto, mensagem);
 	}
 	
@@ -88,6 +84,8 @@ public class Mailer {
 		
 		// para maiores informações veja o site: 
 		// https://www.concretepage.com/spring/spring-gmail-smtp-send-email-with-attachment-using-annotation
+		
+		// Para testar é preciso reduzir a segurança do google via site "https://myaccount.google.com/lesssecureapps"
 		
 		try {
 			MimeMessage mimeMessage = javaMailSender.createMimeMessage();

@@ -60,7 +60,7 @@ public class LancamentoService {
 //	// inicia imediatamento quando a aplicação e iniciada e em seguida cada chamada só é executada 
 //	// após o término da anterior e somente 5 segundo após o término da anterior
 //	@Scheduled(fixedDelay = 1000 * 5)
-//	public void avisarSobreLancamentosVencidos() {
+//	public void avisarSobreLancamentosVencidos2() {
 //		System.out.println(">>>>>>>>>>>>>>> Método sendo executado...");
 //	}
 	
@@ -70,11 +70,11 @@ public class LancamentoService {
 	// as 06:00:00
 	
 	
-//	@Scheduled(fixedDelay = 1000 * 60 * 30)	// tempo em milisegundos (= 1 segundo) * segundos * minutos 
-	@Scheduled(cron = "0 0 6 * * *")
+	@Scheduled(fixedDelay = 1000 * 60 * 30)	// tempo em milisegundos (= 1 segundo) * segundos * minutos 
+//	@Scheduled(cron = "0 0 6 * * *")
 	public void avisarSobreLancamentosVencidos() {
 		
-//		System.out.println(">>>>>>>>>>>>>>> Enviando EMail...");
+		System.out.println(">>>>>>>>>>>>>>> Enviando EMail...");
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("-->>> Preparando envio de e-mails de aviso de lançamentos vencidos.");

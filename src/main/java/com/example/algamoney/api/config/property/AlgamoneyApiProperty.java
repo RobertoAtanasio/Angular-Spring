@@ -33,7 +33,7 @@ public class AlgamoneyApiProperty {
 		
 		private String accessKeyId;
 		private String secretAccessKey;
-		private String bucket = "rapl-arquivos";
+		private String bucket = "aws-rapl";
 
 		public String getAccessKeyId() {
 			return accessKeyId;
