@@ -1,6 +1,7 @@
 package com.example.algamoney.api.service;
 
 import java.io.InputStream;
+//import java.sql.Connection;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+//import javax.sql.DataSource;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -57,6 +59,9 @@ public class LancamentoService {
 	@Autowired
 	private S3 s3;
 	
+//	@Autowired
+//	private DataSource dataSource;
+	
 //	// inicia imediatamento quando a aplicação e iniciada e em seguida cada chamada só é executada 
 //	// após o término da anterior e somente 5 segundo após o término da anterior
 //	@Scheduled(fixedDelay = 1000 * 5)
@@ -70,8 +75,8 @@ public class LancamentoService {
 	// as 06:00:00
 	
 	
-	@Scheduled(fixedDelay = 1000 * 60 * 30)	// tempo em milisegundos (= 1 segundo) * segundos * minutos 
-//	@Scheduled(cron = "0 0 6 * * *")
+//	@Scheduled(fixedDelay = 1000 * 60 * 30)	// tempo em milisegundos (= 1 segundo) * segundos * minutos 
+	@Scheduled(cron = "0 0 6 * * *")
 	public void avisarSobreLancamentosVencidos() {
 		
 		System.out.println(">>>>>>>>>>>>>>> Enviando EMail...");
@@ -116,10 +121,17 @@ public class LancamentoService {
 		InputStream inputStream = this.getClass().getResourceAsStream(
 				"/relatorios/lancamentos-por-pessoa.jasper");
 		
-		JasperPrint jasperPrint = JasperFillManager.fillReport(inputStream, parametros,
+		//--- usar Connection se no relatório está definido o select diretamente no mesmo. Neste caso, deve-se passar 
+		//	  a conexão do banco de dados.
+//		Connection con = this.dataSource.getConnection();
+		
+		JasperPrint jasperPrint = JasperFillManager.fillReport(inputStream, parametros, 
 				new JRBeanCollectionDataSource(dados));
 		
+//		JasperPrint jasperPrint2 = JasperFillManager.fillReport(inputStream, parametros, con);
+		
 		return JasperExportManager.exportReportToPdf(jasperPrint);
+//		return JasperExportManager.exportReportToPdf(jasperPrint2);
 	}
 	
 	public Lancamento salvar(@Valid Lancamento lancamento) {

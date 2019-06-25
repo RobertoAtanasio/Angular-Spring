@@ -38,9 +38,9 @@ public class RefreshTokenPostProcessor implements ResponseBodyAdvice<OAuth2Acces
 		HttpServletRequest req = ((ServletServerHttpRequest) request).getServletRequest();
 		HttpServletResponse resp = ((ServletServerHttpResponse) response).getServletResponse();
 		
-		DefaultOAuth2AccessToken token = (DefaultOAuth2AccessToken) body;
-		
-		String refreshToken = body.getRefreshToken().getValue();
+		DefaultOAuth2AccessToken token = (DefaultOAuth2AccessToken) body;	// esse 'token' ainda é o body. Vai servir para
+																			// o refresh token -> token.setRefreshToken(null); 
+		String refreshToken = body.getRefreshToken().getValue();	// get do RefreshToken
 		adicionarRefreshTokenNoCookie(refreshToken, req, resp);
 		removerRefreshTokenDoBody(token);
 		
@@ -53,14 +53,14 @@ public class RefreshTokenPostProcessor implements ResponseBodyAdvice<OAuth2Acces
 
 	private void adicionarRefreshTokenNoCookie(String refreshToken, HttpServletRequest req, HttpServletResponse resp) {
 		Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-		refreshTokenCookie.setHttpOnly(true);
+		refreshTokenCookie.setHttpOnly(true);	// é apenas um cookies de http
 		
 //		System.out.println(">>>>>> algamoneyApiProperty.getSeguranca().isEnableHttps(): " + algamoneyApiProperty.getSeguranca().isEnableHttps());
 		
-		refreshTokenCookie.setSecure(algamoneyApiProperty.getSeguranca().isEnableHttps());
+		refreshTokenCookie.setSecure(algamoneyApiProperty.getSeguranca().isEnableHttps());	// produção = true
 		refreshTokenCookie.setPath(req.getContextPath() + "/oauth/token");
 		refreshTokenCookie.setMaxAge(2592000);	// equivale a 30 dias
-		resp.addCookie(refreshTokenCookie);
+		resp.addCookie(refreshTokenCookie);	// adicionar o cookie na resposta
 	}
 
 }

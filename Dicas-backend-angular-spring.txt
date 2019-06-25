@@ -122,6 +122,7 @@
 *	git add .
 *	git commit -m 'Primeiro Commit'
 
+	heroku login
 ***
 	heroku restart -a roberto-algamoney-api					para restart
 
@@ -157,6 +158,8 @@
 	
 	
 	git push heroku master			envia para o heroku o projeto
+	
+	git remote -v
 	
 	Abaixo parte do log gerado pelo comando acima:
 	remote:        [INFO] Installing /tmp/build_c304cde62ca5ac4fda50f8a2bbbca7be/pom.xml to /app/tmp/cache/.m2/repository/com/algaworks/algamoney-api/algamoney-api/1.0.0-SNAPSHOT/algamoney-api-1.0.0-SNAPSHOT.pom
@@ -519,9 +522,14 @@ application.properties
 
 	algamoney.mail.host=smtp.gmail.com
 	algamoney.mail.port=587
-	algamoney.mail.username=roberto.atanasio.pl@gmail.com
+	algamoney.mail.username=roberto...@gmail.com
 	algamoney.mail.password=...
 
 	algamoney.s3.access-key-id=...
 	algamoney.s3.secret-access-key=...
+	
+	
+	
+
+
 		

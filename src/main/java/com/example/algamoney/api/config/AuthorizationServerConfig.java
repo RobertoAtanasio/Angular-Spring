@@ -31,6 +31,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+		
+		System.out.println(">>>>>>>  4   ClientDetailsServiceConfigurer >>>>>>>>>>>>>>>>");
+		
 		clients.inMemory()
 			.withClient("angular")
 			.secret("$2a$10$Nyrj9biofcOvj9PwIn7bsu70ju17mxG9.DUL4OUi22FWUGBqwLGWO")		// angular0
@@ -50,10 +53,10 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
 		
+		System.out.println(">>>>>>>  3   AuthorizationServerEndpointsConfigurer >>>>>>>>>>>>>>>>");
+
 		TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
 		tokenEnhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer(), accessTokenConverter()));
-		
-//		System.out.println(">>>>>>> setTokenEnhancers >>>>>>>>>>>>>>>>");
 		
 		endpoints
 		.tokenStore(tokenStore())
@@ -65,21 +68,28 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	
 	@Bean
 	public JwtAccessTokenConverter accessTokenConverter() {
+		
+		System.out.println(">>>>>>>  0   JwtAccessTokenConverter >>>>>>>>>>>>>>>>");
+		
 		JwtAccessTokenConverter accessToken = new JwtAccessTokenConverter();
 		accessToken.setSigningKey("algaworks");	// senha que fica na VERIFY SIGNATURE do token
-		
-//		System.out.println(">>>>>>> JwtAccessTokenConverter accessTokenConverter >>>>>>>>>>>>>>>>");
 		
 		return accessToken;
 	}
 
 	@Bean
 	public TokenStore tokenStore() {
+		
+		System.out.println(">>>>>>>  1   TokenStore >>>>>>>>>>>>>>>>");
+		
 		return new JwtTokenStore(accessTokenConverter());
 	}
 	
 	@Bean
 	public TokenEnhancer tokenEnhancer() {
+		
+		System.out.println(">>>>>>>  2   TokenEnhancer >>>>>>>>>>>>>>>>");
+		
 	    return new CustomTokenEnhancer();
 	}
 	

@@ -18,6 +18,8 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+// filtro para recuperar o refreshtoken encaminhado pelo browser e colocá-lo na requisição
+
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class RefreshTokenCookiePreProcessorFilter implements Filter {
@@ -38,8 +40,9 @@ public class RefreshTokenCookiePreProcessorFilter implements Filter {
 				&& req.getCookies() != null) {
 			for (Cookie cookie : req.getCookies()) {
 				if (cookie.getName().equals("refreshToken")) {
-					String refreshToken = cookie.getValue();
-					req = new MyServletRequestWrapper(req, refreshToken);
+					String refreshToken = cookie.getValue();	// obtém o cookie
+					req = new MyServletRequestWrapper(req, refreshToken);	// incluir o refreshtoken na requisição nova
+																			// Ver classe abaixo
 				}
 			}
 		}
@@ -68,9 +71,12 @@ public class RefreshTokenCookiePreProcessorFilter implements Filter {
 		
 		@Override
 		public Map<String, String[]> getParameterMap() {
+			// criar um novo ParameterMap.
+			// iniciado com a requisição original.
+			// o refresh_token está definido no postman
 			ParameterMap<String, String[]> map = new ParameterMap<>(getRequest().getParameterMap());
 			map.put("refresh_token", new String[] { refreshToken });
-			map.setLocked(true);
+			map.setLocked(true);	// proteger o novo mapa criado
 			return map;
 		}
 		
